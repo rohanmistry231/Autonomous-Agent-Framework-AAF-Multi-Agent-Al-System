@@ -1,0 +1,454 @@
+================================================================================
+  AUTONOMOUS AGENT FRAMEWORK (AAF) - INSTALLATION GUIDE
+================================================================================
+
+This package contains a complete implementation of the Autonomous Agent 
+Framework for software development based on research by Mistry Rohan.
+
+================================================================================
+PACKAGE CONTENTS
+================================================================================
+
+Core Python Modules (7 files):
+  - models.py              (379 lines) - Data models
+  - memory.py              (409 lines) - Memory system
+  - reasoning_engine.py    (546 lines) - Reasoning engine
+  - agents.py              (697 lines) - Multi-agent system
+  - evaluator.py           (370 lines) - Evaluation harness
+  - main.py                (278 lines) - CLI interface
+  - tests/test_aaf.py      (453 lines) - Test suite
+
+Documentation (5 files):
+  - README.md              - Complete documentation
+  - QUICKSTART.md          - Quick start guide
+  - PROJECT_SUMMARY.md     - Build summary
+  - ARCHITECTURE.md        - Architecture diagrams
+  - INSTALL.txt            - This file
+
+Configuration:
+  - requirements.txt       - Python dependencies
+  - .env.example           - Configuration template
+  - .env                   - Pre-configured (needs API key)
+
+Directories:
+  - data/                  - FAISS indices (created at runtime)
+  - logs/                  - Audit logs (created at runtime)
+  - workspace/             - Temp execution files
+  - results/               - Evaluation results
+  - tests/                 - Test suite
+
+Total: 3,762 lines of production-ready code
+
+================================================================================
+SYSTEM REQUIREMENTS
+================================================================================
+
+Required:
+  - Python 3.11 or higher
+  - pip (Python package manager)
+  - 2GB RAM minimum, 4GB recommended
+  - Internet connection (for OpenAI API)
+  - OpenAI API key (get from https://platform.openai.com/api-keys)
+
+Optional (but recommended):
+  - Docker Desktop (for safe code execution sandbox)
+  - Git (for version control)
+  - 10GB free disk space (for embeddings and results)
+
+Operating Systems:
+  - Linux (Ubuntu 20.04+, Debian 11+, CentOS 8+)
+  - macOS (11.0+)
+  - Windows (10/11 with WSL2 or native Python)
+
+================================================================================
+INSTALLATION STEPS
+================================================================================
+
+STEP 1: EXTRACT THE ZIP FILE
+-----------------------------
+
+Windows:
+  - Right-click aaf_system.zip
+  - Select "Extract All..."
+  - Choose destination folder
+  - Click "Extract"
+
+macOS:
+  - Double-click aaf_system.zip
+  OR
+  - Open Terminal and run: unzip aaf_system.zip
+
+Linux:
+  unzip aaf_system.zip
+  cd aaf_system
+
+
+STEP 2: CREATE VIRTUAL ENVIRONMENT
+-----------------------------------
+
+Windows (CMD):
+  python -m venv venv
+  venv\Scripts\activate
+
+Windows (PowerShell):
+  python -m venv venv
+  .\venv\Scripts\Activate.ps1
+
+macOS/Linux:
+  python3.11 -m venv venv
+  source venv/bin/activate
+
+You should see (venv) in your command prompt.
+
+
+STEP 3: INSTALL DEPENDENCIES
+-----------------------------
+
+With virtual environment activated:
+
+  pip install --upgrade pip
+  pip install -r requirements.txt
+
+This will install:
+  - openai (API client)
+  - langchain (LLM framework)
+  - faiss-cpu (vector database)
+  - numpy (numerical computing)
+  - pydantic (data validation)
+  - pytest (testing)
+  - rich (CLI formatting)
+  - bandit (security scanning)
+  - And other dependencies...
+
+Installation time: 2-5 minutes
+
+
+STEP 4: CONFIGURE API KEY
+--------------------------
+
+Option A: Edit .env file
+  1. Open .env in a text editor
+  2. Find line: OPENAI_API_KEY=your_key_here
+  3. Replace with: OPENAI_API_KEY=sk-your-actual-key
+  4. Save and close
+
+Option B: Use .env.example
+  1. Copy .env.example to .env
+  2. Edit .env as described in Option A
+
+To get an OpenAI API key:
+  1. Go to https://platform.openai.com/api-keys
+  2. Sign up or log in
+  3. Click "Create new secret key"
+  4. Copy the key (starts with sk-)
+  5. Paste into .env file
+
+IMPORTANT: Keep your API key secret! Never commit it to Git.
+
+
+STEP 5: VERIFY INSTALLATION
+----------------------------
+
+Run the test suite:
+  pytest tests/ -v
+
+Expected output:
+  ======================== test session starts =========================
+  tests/test_aaf.py::test_working_memory_eviction PASSED
+  tests/test_aaf.py::test_agent_message_validation PASSED
+  tests/test_aaf.py::test_shared_state_step_limit PASSED
+  ... (15+ tests should pass)
+  ======================== 15 passed in 2.5s ==========================
+
+
+STEP 6: RUN YOUR FIRST TASK
+----------------------------
+
+Simple test:
+  python main.py solve --task "Write a function to reverse a string"
+
+Expected behavior:
+  1. Banner displays
+  2. Agents start working (RA → AA → IA → VA → INA)
+  3. Progress shown in console
+  4. Final code displayed
+  5. Solution saved to logs/
+
+Full example with output:
+  python main.py solve \
+    --task "Write a function to check if a number is prime" \
+    --output solution.py \
+    --verbose
+
+
+STEP 7: TRY EVALUATION
+-----------------------
+
+Run on 3 HumanEval problems:
+  python main.py eval --benchmark humaneval --max-problems 3
+
+This will:
+  1. Load built-in test problems
+  2. Run AAF on each problem
+  3. Execute tests
+  4. Display results table
+  5. Save results to results/ directory
+
+Expected time: 2-5 minutes for 3 problems
+Expected cost: ~$0.10-0.30 (with GPT-4o)
+
+
+STEP 8: EXPLORE INTERACTIVE MODE
+---------------------------------
+
+  python main.py interactive
+
+This launches a REPL where you can:
+  - Enter tasks one at a time
+  - See results immediately
+  - Iterate and experiment
+  - Type 'quit' to exit
+
+================================================================================
+OPTIONAL: DOCKER SETUP (RECOMMENDED)
+================================================================================
+
+Docker provides safe sandboxed execution for generated code.
+
+Windows/macOS:
+  1. Download Docker Desktop from https://www.docker.com/products/docker-desktop
+  2. Install and start Docker Desktop
+  3. Verify: docker run hello-world
+
+Linux:
+  sudo apt-get update
+  sudo apt-get install docker.io
+  sudo systemctl start docker
+  sudo usermod -aG docker $USER
+  # Log out and back in
+  docker run hello-world
+
+Pull Python image:
+  docker pull python:3.11-slim
+
+Without Docker:
+  - System will fall back to direct Python execution
+  - Less safe but still functional
+  - Warning will be shown
+
+================================================================================
+CONFIGURATION OPTIONS
+================================================================================
+
+Edit .env to customize:
+
+OPENAI_MODEL=gpt-4o
+  Options: gpt-4o (recommended), gpt-3.5-turbo (faster, cheaper)
+
+WORKING_MEMORY_SIZE=12
+  Range: 5-20 (higher = more context, slower)
+
+TOT_CONFIDENCE_THRESHOLD=0.60
+  Range: 0.40-0.80 (lower = more ToT usage, slower but better)
+
+TOT_BRANCHES=3
+  Range: 2-5 (more branches = better selection, more expensive)
+
+MAX_STEPS=50
+  Range: 20-100 (safety limit for reasoning loops)
+
+================================================================================
+USAGE EXAMPLES
+================================================================================
+
+1. SIMPLE TASK
+--------------
+python main.py solve --task "Write a function to add two numbers"
+
+2. WITH OUTPUT FILE
+-------------------
+python main.py solve \
+  --task "Implement quicksort" \
+  --output quicksort.py \
+  --verbose
+
+3. REPOSITORY TASK
+------------------
+python main.py solve \
+  --task "Add error handling to main.py" \
+  --repo /path/to/project
+
+4. EVALUATION
+-------------
+python main.py eval --benchmark humaneval --max-problems 10
+
+5. CUSTOM PROBLEMS
+------------------
+python main.py eval \
+  --benchmark humaneval \
+  --eval-file my_problems.json \
+  --max-problems 20
+
+6. INTERACTIVE
+--------------
+python main.py interactive
+> Write a binary search function
+> Implement a stack with push and pop
+> quit
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+Problem: "OPENAI_API_KEY not set"
+Solution: Edit .env file and add your API key
+
+Problem: "No module named 'openai'"
+Solution: Activate venv and run: pip install -r requirements.txt
+
+Problem: "FAISS not found"
+Solution: pip install faiss-cpu
+
+Problem: "Docker not available"
+Solution: Install Docker Desktop OR ignore (system works without it)
+
+Problem: "Rate limit error"
+Solution: 
+  - Wait 60 seconds and retry
+  - Reduce max_problems in evaluations
+  - Use gpt-3.5-turbo instead of gpt-4o
+
+Problem: Tests failing
+Solution:
+  - Check Python version: python --version (must be 3.11+)
+  - Reinstall dependencies: pip install -r requirements.txt --force-reinstall
+  - Check API key in .env
+
+Problem: Slow performance
+Solution:
+  - Use gpt-3.5-turbo in .env
+  - Reduce WORKING_MEMORY_SIZE
+  - Reduce TOT_BRANCHES
+  - Ensure good internet connection
+
+Problem: High API costs
+Solution:
+  - Start with max_problems=3 in evaluations
+  - Use gpt-3.5-turbo for testing
+  - Monitor usage at https://platform.openai.com/usage
+
+================================================================================
+FILE STRUCTURE
+================================================================================
+
+aaf_system/
+├── .env                   # Configuration (YOUR API KEY HERE)
+├── .env.example           # Configuration template
+├── requirements.txt       # Python dependencies
+├── README.md              # Full documentation
+├── QUICKSTART.md          # Quick start guide
+├── PROJECT_SUMMARY.md     # Build summary
+├── ARCHITECTURE.md        # Architecture diagrams
+├── INSTALL.txt            # This file
+│
+├── main.py                # CLI entry point
+├── models.py              # Data models
+├── memory.py              # Memory system (DLAMS)
+├── reasoning_engine.py    # Reasoning engine (HRE)
+├── agents.py              # Multi-agent system (MACP)
+├── evaluator.py           # Evaluation harness
+│
+├── tests/
+│   └── test_aaf.py       # Test suite (pytest)
+│
+├── data/                  # FAISS indices (created at runtime)
+├── logs/                  # Audit logs (JSONL)
+├── workspace/             # Temp execution files
+└── results/               # Evaluation results (JSON)
+
+================================================================================
+GETTING HELP
+================================================================================
+
+1. Check documentation:
+   - README.md for comprehensive docs
+   - QUICKSTART.md for quick reference
+   - ARCHITECTURE.md for system design
+
+2. Check logs:
+   - Audit logs in logs/ show all reasoning steps
+   - Use --verbose flag for detailed output
+
+3. Run tests:
+   - pytest tests/ -v
+   - Helps identify installation issues
+
+4. Common resources:
+   - OpenAI API: https://platform.openai.com/docs
+   - FAISS: https://github.com/facebookresearch/faiss
+   - Python: https://docs.python.org/3/
+
+================================================================================
+COST ESTIMATION
+================================================================================
+
+With GPT-4o:
+  - Single simple task: $0.02-0.05
+  - Single complex task: $0.15-0.30
+  - HumanEval-10: $0.50-2.00
+  - HumanEval-164 (full): $8-30
+
+With GPT-3.5-turbo:
+  - ~90% cheaper than GPT-4o
+  - Lower quality results
+  - Good for testing
+
+Tips to save money:
+  - Start with small evaluations
+  - Use gpt-3.5-turbo for development
+  - Switch to gpt-4o for production
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+1. ✅ Complete installation (Steps 1-7)
+2. ✅ Verify with test suite
+3. ✅ Run your first task
+4. ✅ Try evaluation on 3 problems
+5. ✅ Explore interactive mode
+6. 📖 Read QUICKSTART.md for more examples
+7. 📖 Read README.md for full documentation
+8. 📖 Read ARCHITECTURE.md to understand design
+9. 🔧 Customize configuration in .env
+10. 🚀 Build something amazing!
+
+================================================================================
+LICENSE
+================================================================================
+
+MIT License - See README.md for full text
+
+Copyright (c) 2024 Mistry Rohan
+Swarrnim Startup and Innovation University
+
+================================================================================
+SUPPORT
+================================================================================
+
+For issues or questions:
+  1. Check this INSTALL.txt file
+  2. Review TROUBLESHOOTING section above
+  3. Check README.md FAQ section
+  4. Review audit logs in logs/
+  5. Run with --verbose flag
+
+================================================================================
+
+Congratulations! You're ready to use the Autonomous Agent Framework.
+
+Start with: python main.py solve --task "Write a hello world function"
+
+Happy coding! 🚀
+
+================================================================================
